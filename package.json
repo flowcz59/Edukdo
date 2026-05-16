@@ -1,0 +1,18 @@
+{
+  "name": "edukdo",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run start:dev --workspace=apps/api\" \"npm run start --workspace=apps/mobile\"",
+    "build": "npm run build --workspace=apps/api && npm run build --workspace=apps/mobile",
+    "test": "npm run test --workspace=apps/api && npm run test --workspace=apps/mobile"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  }
+}
