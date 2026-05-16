@@ -1,0 +1,12 @@
+{
+  "name": "edukdo",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "mobile": "cd apps/mobile && npx expo start",
+    "api:dev": "cd apps/api && npm run start:dev"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "EDUKDO",
+    "slug": "edukdo",
+    "scheme": "edukdo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0F1E"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "fr.edukdo.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "EDUKDO utilise la caméra pour photographier vos bulletins scolaires.",
+        "NSPhotoLibraryUsageDescription": "EDUKDO accède à vos photos pour soumettre vos bulletins scolaires.",
+        "NSPhotoLibraryAddUsageDescription": "EDUKDO enregistre des photos de vos bulletins scolaires."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0F1E"
+      },
+      "package": "fr.edukdo.app",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "EDUKDO accède à vos photos pour soumettre vos bulletins scolaires.",
+          "cameraPermission": "EDUKDO utilise la caméra pour photographier vos bulletins scolaires.",
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
