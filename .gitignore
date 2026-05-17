@@ -4,3 +4,4 @@ dist/
 build/
 .expo/
 *.log
+apps/api/uploads/
