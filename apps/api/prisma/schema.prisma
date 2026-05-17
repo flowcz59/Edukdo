@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(STUDENT)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  studentProfile StudentProfile?
+  parentProfile  ParentProfile?
+  refreshTokens  RefreshToken[]
+}
+
+enum Role {
+  STUDENT
+  PARENT
+  ADMIN
+}
+
+model StudentProfile {
+  id          String      @id @default(cuid())
+  userId      String      @unique
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  firstName   String
+  lastName    String
+  birthDate   DateTime
+  schoolLevel SchoolLevel
+  schoolName  String?
+
+  pointsTotal  Int @default(0)
+  pointsEarned Int @default(0)
+  pointsSpent  Int @default(0)
+
+  bulletins   Bulletin[]
+  pointEvents PointEvent[]
+  orders      Order[]
+
+  parentProfile ParentProfile? @relation(fields: [parentId], references: [id])
+  parentId      String?
+}
+
+enum SchoolLevel {
+  SIXIEME
+  CINQUIEME
+  QUATRIEME
+  TROISIEME
+  SECONDE
+  PREMIERE
+  TERMINALE
+}
+
+model ParentProfile {
+  id        String @id @default(cuid())
+  userId    String @unique
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  firstName String
+  lastName  String
+
+  children         StudentProfile[]
+  pendingApprovals Order[]          @relation("ParentApprovals")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Bulletin {
+  id        String         @id @default(cuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+
+  type           BulletinType
+  status         BulletinStatus @default(PENDING)
+
+  imageUrl        String
+  rawOcrData      Json?
+  extractedGrades Json?
+
+  trimester    Int?
+  academicYear String?
+  subjectName  String?
+
+  pointsAwarded  Int   @default(0)
+  scoringDetails Json?
+
+  aiComment String?
+
+  submittedAt DateTime  @default(now())
+  processedAt DateTime?
+
+  pointEvent PointEvent?
+}
+
+enum BulletinType {
+  BULLETIN_TRIMESTRIEL
+  DEVOIR
+}
+
+enum BulletinStatus {
+  PENDING
+  PROCESSING
+  NEEDS_REVIEW
+  VALIDATED
+  REJECTED
+}
+
+model PointEvent {
+  id           String         @id @default(cuid())
+  studentId    String
+  student      StudentProfile @relation(fields: [studentId], references: [id])
+
+  type         PointEventType
+  amount       Int
+  balanceAfter Int
+  description  String
+
+  bulletinId String?   @unique
+  bulletin   Bulletin? @relation(fields: [bulletinId], references: [id])
+
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+enum PointEventType {
+  BULLETIN_REWARD
+  BONUS_REGULARITY
+  SHOP_REDEMPTION
+  ADMIN_ADJUSTMENT
+}
+
+model Reward {
+  id          String         @id @default(cuid())
+  name        String
+  description String
+  category    RewardCategory
+  partnerName String
+  partnerLogo String?
+
+  pointsCost Int
+  stock      Int     @default(-1)
+  isActive   Boolean @default(true)
+
+  imageUrl String?
+  termsUrl String?
+
+  orders Order[]
+
+  createdAt DateTime @default(now())
+}
+
+enum RewardCategory {
+  CINEMA
+  STREAMING
+  LIVRES_CULTURE
+  PARC_ATTRACTION
+  CARTE_CADEAU
+  MUSEE
+}
+
+model Order {
+  id        String         @id @default(cuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+  rewardId  String
+  reward    Reward         @relation(fields: [rewardId], references: [id])
+
+  pointsSpent Int
+  status      OrderStatus @default(PENDING_PARENT_APPROVAL)
+
+  parentId         String?
+  parent           ParentProfile? @relation("ParentApprovals", fields: [parentId], references: [id])
+  parentApprovedAt DateTime?
+
+  voucherCode String?
+  deliveredAt DateTime?
+
+  pointEvent PointEvent[]
+  createdAt  DateTime     @default(now())
+}
+
+enum OrderStatus {
+  PENDING_PARENT_APPROVAL
+  APPROVED
+  DELIVERED
+  CANCELLED
+}
