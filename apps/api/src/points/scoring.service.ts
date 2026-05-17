@@ -198,7 +198,7 @@ export class ScoringService {
       return { progressBonus: 0, previousMoyenne: null };
     }
 
-    const prevGrades = previousBulletin.extractedGrades as GradeInput[];
+    const prevGrades = previousBulletin.extractedGrades as unknown as GradeInput[];
     const previousMoyenne = this.calculateMoyenneGenerale(prevGrades);
     const progression = moyenneActuelle - previousMoyenne;
 

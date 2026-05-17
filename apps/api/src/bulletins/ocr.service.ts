@@ -68,8 +68,9 @@ export class OcrService {
       }),
     );
 
-    const grades = this.parseTextractResponse(response);
-    const confidenceScore = this.computeConfidence(response);
+    const responseRecord = response as unknown as Record<string, unknown>;
+    const grades = this.parseTextractResponse(responseRecord);
+    const confidenceScore = this.computeConfidence(responseRecord);
 
     return {
       grades,

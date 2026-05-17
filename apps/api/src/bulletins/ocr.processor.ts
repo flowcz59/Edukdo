@@ -159,7 +159,7 @@ export class OcrProcessor {
 
     if (!prev?.extractedGrades) return undefined;
 
-    const grades = prev.extractedGrades as GradeInput[];
+    const grades = prev.extractedGrades as unknown as GradeInput[];
     const totalCoeff = grades.reduce((s, g) => s + (g.coefficient ?? 1), 0);
     return (
       grades.reduce((s, g) => s + (g.grade / g.maxGrade) * 20 * (g.coefficient ?? 1), 0) /

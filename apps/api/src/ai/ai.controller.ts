@@ -38,7 +38,7 @@ export class AiController {
 
     if (!bulletin) throw new NotFoundException(`Bulletin ${dto.bulletinId} not found`);
 
-    const grades = (bulletin.extractedGrades as GradeEntry[] | null) ?? [];
+    const grades = (bulletin.extractedGrades as unknown as GradeEntry[] | null) ?? [];
 
     let previousAverage: number | undefined;
     if (bulletin.academicYear) {
@@ -55,7 +55,7 @@ export class AiController {
       });
 
       if (previousBulletin?.extractedGrades) {
-        const prevGrades = previousBulletin.extractedGrades as GradeEntry[];
+        const prevGrades = previousBulletin.extractedGrades as unknown as GradeEntry[];
         const totalCoeff = prevGrades.reduce((s, g) => s + (g.coefficient ?? 1), 0);
         previousAverage =
           prevGrades.reduce(
